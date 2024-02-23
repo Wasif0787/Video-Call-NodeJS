@@ -29,4 +29,19 @@ io.on("connection", (socket) => {
     socket.on("peer:nego:done", ({ to, ans }) => {
         io.to(to).emit("peer:nego:final", { from: socket.id, ans });
     })
+    socket.on("call:ended", ({ to }) => {
+        // Broadcast to the recipient that the call has ended
+        io.to(to).emit("call:ended");
+    });
+
+    // Disconnect event handling
+    socket.on("disconnect", () => {
+        console.log("Socket disconnected", socket.id);
+        // Clean up any resources associated with the socket
+        const email = socketIdtoEmailMap.get(socket.id);
+        if (email) {
+            emailToSocketIdMap.delete(email);
+            socketIdtoEmailMap.delete(socket.id);
+        }
+    });
 })

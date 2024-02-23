@@ -8,6 +8,7 @@ const RoomPage = () => {
     const [remoteSocketId, setRemoteSocketId] = useState(null);
     const [myStream, setMyStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
+    const [isCallActive, setIsCallActive] = useState(false);
 
     const handleUserJoined = useCallback(({ email, id }) => {
         console.log(`Email joined ${email} `);
@@ -87,28 +88,56 @@ const RoomPage = () => {
         };
     }, [handleUserJoined, socket, handleIncommingCall, handleCallAccepted, handleNegoNeeded, handleNegoNeedFinal]);
 
+    const handleEndCall = useCallback(() => {
+        if (myStream) {
+            myStream.getTracks().forEach(track => track.stop());
+            setMyStream(null);
+        }
+        if (remoteStream) {
+            remoteStream.getTracks().forEach(track => track.stop());
+            setRemoteStream(null);
+        }
+
+        socket.emit('call:ended', { to: remoteSocketId });
+        setIsCallActive(false);
+        setRemoteSocketId(null);
+    }, [myStream, remoteStream, remoteSocketId, socket]);
+
+
 
 
     const handleCallButton = useCallback(async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
         const offer = await peer.getOffer()
         socket.emit("user:call", { to: remoteSocketId, offer })
+        setIsCallActive(true);
         setMyStream(stream);
     }, [remoteSocketId, socket]);
 
     return (
         <div className="flex flex-col items-center justify-center space-y-5 md:space-y-8 px-4">
             <h1 className="text-4xl mt-5">Room Page</h1>
-            <h4>{remoteSocketId ? 'Connected' : 'No one is in the room'}</h4>
-            {myStream && <button onClick={sendStreams}>Send Stream</button>}
-            <div className="text-center">
-                {remoteSocketId && (
-                    <button onClick={handleCallButton} className="border-4 w-full md:w-auto py-2 px-4">
-                        CALL
-                    </button>
-                )}
+            <div className='flex w-[50%]  flex-col md:flex-row justify-center text-center space-y-3 md:space-y-0 md:space-x-3'>
+                <h4>{remoteSocketId ? 'Connected' : 'No one is in the room'}</h4>
+                {myStream && <button className='border-4 ml-2 md:ml-0 md:mt-0' onClick={sendStreams}>Send Stream</button>}
             </div>
-            <div className='w-full flex '>
+
+            {!myStream && (
+                <div className="text-center">
+                    {remoteSocketId && (
+                        <button onClick={handleCallButton} className="border-4 w-full md:w-auto py-2 px-4">
+                            CALL
+                        </button>
+                    )}
+                </div>
+            )}
+            {myStream && <div className="text-center text-red-600 font-bold">
+                <button onClick={handleEndCall} className="border-4 w-full md:w-auto py-2 px-4">
+                    DISCONNECT
+                </button>
+            </div>}
+
+            <div className='w-full md:flex'>
                 {myStream && (
                     <div className="w-full md:w-[50%] mx-auto text-center">
                         <h1>My Stream</h1>
