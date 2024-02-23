@@ -138,20 +138,6 @@ const RoomPage = () => {
             </div>}
 
             <div className='w-full md:flex'>
-                {myStream && (
-                    <div className="w-full md:w-[50%] mx-auto text-center">
-                        <h1>My Stream</h1>
-                        <div className="relative" style={{ paddingTop: '56.25%' }}>
-                            <ReactPlayer
-                                className="absolute top-0 left-0"
-                                playing
-                                url={myStream}
-                                width="100%"
-                                height="100%"
-                            />
-                        </div>
-                    </div>
-                )}
                 {remoteStream && (
                     <div className="w-full md:w-[50%] mx-auto text-center">
                         <h1>Remote Stream</h1>
@@ -166,6 +152,21 @@ const RoomPage = () => {
                         </div>
                     </div>
                 )}
+                {myStream && (
+                    <div className="w-full md:w-[50%] mx-auto text-center">
+                        <h1>My Stream</h1>
+                        <div className="relative" style={{ paddingTop: '56.25%' }}>
+                            <ReactPlayer
+                                className="absolute top-0 left-0"
+                                playing
+                                url={myStream}
+                                width="100%"
+                                height="100%"
+                            />
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );
