@@ -116,7 +116,6 @@ const RoomPage = () => {
                             <ReactPlayer
                                 className="absolute top-0 left-0"
                                 playing
-                                muted
                                 url={myStream}
                                 width="100%"
                                 height="100%"
@@ -131,7 +130,6 @@ const RoomPage = () => {
                             <ReactPlayer
                                 className="absolute top-0 left-0"
                                 playing
-                                muted
                                 url={remoteStream}
                                 width="100%"
                                 height="100%"
