@@ -2,16 +2,20 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSocket } from '../context/SocketProvider';
 import ReactPlayer from 'react-player';
 import peer from "../service/peer.js"
+import { useNavigate } from "react-router-dom"
 
 const RoomPage = () => {
     const socket = useSocket();
+    const navigate = useNavigate()
     const [remoteSocketId, setRemoteSocketId] = useState(null);
     const [myStream, setMyStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
     const [isCallActive, setIsCallActive] = useState(false);
+    const [participant, setParticipant] = useState("")
 
     const handleUserJoined = useCallback(({ email, id }) => {
         console.log(`Email joined ${email} `);
+        setParticipant(email)
         setRemoteSocketId(id);
     }, []);
 
@@ -93,18 +97,16 @@ const RoomPage = () => {
             myStream.getTracks().forEach(track => track.stop());
             setMyStream(null);
         }
+
         if (remoteStream) {
             remoteStream.getTracks().forEach(track => track.stop());
             setRemoteStream(null);
         }
-
         socket.emit('call:ended', { to: remoteSocketId });
         setIsCallActive(false);
         setRemoteSocketId(null);
+        navigate("/")
     }, [myStream, remoteStream, remoteSocketId, socket]);
-
-
-
 
     const handleCallButton = useCallback(async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
@@ -115,13 +117,12 @@ const RoomPage = () => {
     }, [remoteSocketId, socket]);
 
     return (
-        <div className="flex flex-col items-center justify-center space-y-5 md:space-y-8 px-4">
+        <div className="flex flex-col items-center justify-center space-y-5 md:space-y-8 px-4 min-h-screen w-[100%] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
             <h1 className="text-4xl mt-5">Room Page</h1>
             <div className='flex w-[50%]  flex-col md:flex-row justify-center text-center space-y-3 md:space-y-0 md:space-x-3'>
-                <h4>{remoteSocketId ? 'Connected' : 'No one is in the room'}</h4>
+                {!isCallActive && <h4>{remoteSocketId ? 'Connected' : 'No one is in the room'}</h4>}
                 {myStream && <button className='border-4 ml-2 md:ml-0 md:mt-0' onClick={sendStreams}>Send Stream</button>}
             </div>
-
             {!myStream && (
                 <div className="text-center">
                     {remoteSocketId && (
@@ -129,6 +130,8 @@ const RoomPage = () => {
                             CALL
                         </button>
                     )}
+                    <h1>Participants</h1>
+                    <p>{participant}</p>
                 </div>
             )}
             {myStream && <div className="text-center text-red-600 font-bold">
