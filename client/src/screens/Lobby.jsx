@@ -31,7 +31,7 @@ const LobbyScreen = () => {
                     <div className='flex md:flex-row justify-evenly text-3xl w-full flex-col'>
                         <div className='flex flex-col md:mr-8 text-xl'>
                             <label className='mb-2' htmlFor="email">Name</label>
-                            <input placeholder='Your Name' className='border-2 rounded-md mb-2 p-2 w-64 text-sm' type="email" id='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <input placeholder='Your Name' className='border-2 rounded-md mb-2 p-2 w-64 text-sm' type="text" id='email' value={email} onChange={(e) => setEmail(e.target.value)} />
                         </div>
                         <div className='flex flex-col text-xl md:ml-4'>
                             <label className='mb-2' htmlFor="room">Room No</label>
