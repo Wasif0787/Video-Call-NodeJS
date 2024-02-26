@@ -117,36 +117,35 @@ const RoomPage = () => {
     }, [remoteSocketId, socket]);
 
     return (
-        <div className="flex flex-col items-center justify-center space-y-5 md:space-y-8 px-4 min-h-screen w-[100%] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-            <h1 className="text-4xl mt-5">Room Page</h1>
-            <div className='flex w-[50%]  flex-col md:flex-row justify-center text-center space-y-3 md:space-y-0 md:space-x-3'>
-                {!isCallActive && <h4>{remoteSocketId ? 'Connected' : 'No one is in the room'}</h4>}
-                {myStream && <button className='border-4 ml-2 md:ml-0 md:mt-0' onClick={sendStreams}>Send Stream</button>}
+        <div className='min-h-screen w-[100%] bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200'>
+            <h1 className='text-4xl text-center'>Room Page</h1>
+            <div className='text-center'>
+                {!remoteSocketId && <h4>No one in the room</h4>}
+                {myStream && <button onClick={sendStreams}>Send Stream</button>}
             </div>
             {!myStream && (
-                <div className="text-center">
-                    {remoteSocketId && (
-                        <button onClick={handleCallButton} className="border-4 w-full md:w-auto py-2 px-4">
-                            CALL
-                        </button>
-                    )}
-                    <h1>Participants</h1>
-                    <p>{participant}</p>
+                <div className='mx-2'>
+                    {remoteSocketId && <div className=''>
+                        <div className=''>
+                            <h1 className='mt-5 mb-2 text-lg text-gray-900 font-bold'>Participant</h1>
+                            <div className="border rounded-lg p-3 flex items-center justify-between">
+                                <span className="mr-2 text-slate-800 md:text-4xl">{participant}</span>
+                                <button className='p-1' onClick={handleCallButton}>
+                                    <img src="../../public/video-call.png" alt="Video Call" className="w-5 md:w-8" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    }
                 </div>
             )}
-            {myStream && <div className="text-center text-red-600 font-bold">
-                <button onClick={handleEndCall} className="border-4 w-full md:w-auto py-2 px-4">
-                    DISCONNECT
-                </button>
-            </div>}
 
-            <div className='w-full md:flex'>
+            <div className='flex md:flex-row flex-col w-full items-center justify-center gap-3'>
                 {remoteStream && (
-                    <div className="w-full md:w-[50%] mx-auto text-center">
+                    <div>
                         <h1>Remote Stream</h1>
-                        <div className="relative" style={{ paddingTop: '56.25%' }}>
+                        <div className=''>
                             <ReactPlayer
-                                className="absolute top-0 left-0"
                                 playing
                                 url={remoteStream}
                                 width="100%"
@@ -156,23 +155,21 @@ const RoomPage = () => {
                     </div>
                 )}
                 {myStream && (
-                    <div className="w-full md:w-[50%] mx-auto text-center">
+                    <div className=''>
                         <h1>My Stream</h1>
-                        <div className="relative" style={{ paddingTop: '56.25%' }}>
+                        <div>
                             <ReactPlayer
-                                className="absolute top-0 left-0"
                                 playing
                                 url={myStream}
                                 width="100%"
                                 height="100%"
-                                muted
                             />
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
+
     );
 };
 
