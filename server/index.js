@@ -22,6 +22,8 @@ io.on("connection", (socket) => {
     console.log("Socket connected", socket.id);
     socket.on("room:join", (data) => {
         const { email, room } = data;
+        console.log("Email and room");
+        console.log(email,room);
         emailToSocketIdMap.set(email, socket.id);
         socketIdtoEmailMap.set(socket.id, email);
         io.to(room).emit("user:joined", { email, id: socket.id });
